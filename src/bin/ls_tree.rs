@@ -1,3 +1,4 @@
+/// get paths in index and sort by chronogical order
 use git2::{Commit, DiffOptions, ObjectType, Repository, Signature, Time};
 use git2::{DiffFormat, Error, Pathspec};
 
@@ -54,59 +55,9 @@ fn run() -> Result<(), Error> {
             break;
         }
     }
-    println!("{:?}", sorted_paths);
-    println!("{:?}", paths);
-    // let revwalk = revwalk
-    //     .filter_map(|id| {
-    //         let id = filter_try!(id);
-    //         let commit = filter_try!(repo.find_commit(id));
-    //         let parents = commit.parents().len();
-    //         match commit.parents().len() {
-    //             0 => {
-    //                 let tree = filter_try!(commit.tree());
-    //                 let flags = git2::PathspecFlags::NO_MATCH_ERROR;
-    //                 if ps.match_tree(&tree, flags).is_err() {
-    //                     return None;
-    //                 }
-    //             }
-    //             _ => {
-    //                 let m = commit.parents().all(|parent| {
-    //                     match_with_parent(&repo, &commit, &parent, &mut diffopts).unwrap_or(false)
-    //                 });
-    //                 if !m {
-    //                     return None;
-    //                 }
-    //             }
-    //         }
-    //         Some(Ok(commit))
-    //     })
-    //     .skip(args.flag_skip.unwrap_or(0))
-    //     .take(args.flag_max_count.unwrap_or(!0));
-
-    // // print!
-    // for commit in revwalk {
-    //     let commit = commit?;
-    //     print_commit(&commit);
-    //     if !args.flag_patch || commit.parents().len() > 1 {
-    //         continue;
-    //     }
-    //     let a = if commit.parents().len() == 1 {
-    //         let parent = commit.parent(0)?;
-    //         Some(parent.tree()?)
-    //     } else {
-    //         None
-    //     };
-    //     let b = commit.tree()?;
-    // let diff = repo.diff_tree_to_tree(a.as_ref(), Some(&b), Some(&mut diffopts2))?;
-    //     diff.print(DiffFormat::Patch, |_delta, _hunk, line| {
-    //         match line.origin() {
-    //             ' ' | '+' | '-' => print!("{}", line.origin()),
-    //             _ => {}
-    //         }
-    //         print!("{}", str::from_utf8(line.content()).unwrap());
-    //         true
-    //     })?;
-    // }
-
+    sorted_paths.extend(paths.into_iter().map(|(p, _)| p));
+    for p in sorted_paths {
+        println!("{}", p);
+    }
     Ok(())
 }
